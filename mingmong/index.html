@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pong Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ming Mong</h1>
+    <canvas id="pong"></canvas>
+
+    <script>
+        const canvas = document.getElementById('pong');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = 800;
+        canvas.height = 600;
+
+        const paddleWidth = 10;
+        const paddleHeight = 100;
+        const ballWidth = 64;
+        const ballHeight = 90;
+
+        const player = {
+            x: 10,
+            y: canvas.height / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight,
+            dy: 0,
+            speed: 6,
+            score: 0
+        };
+
+        const computer = {
+            x: canvas.width - paddleWidth - 10,
+            y: canvas.height / 2 - paddleHeight / 2,
+            width: paddleWidth,
+            height: paddleHeight,
+            dy: 0,
+            speed: 4,
+            score: 0
+        };
+
+        const ball = {
+            x: canvas.width / 2 - ballWidth / 2,
+            y: canvas.height / 2 - ballHeight / 2,
+            width: ballWidth,
+            height: ballHeight,
+            dx: 2,
+            dy: 2
+        };
+
+        const ballImage = new Image();
+        ballImage.src = './ming_pong_ball.png'; // Replace with your ball image URL
+
+        function drawRect(x, y, width, height, color = '#fff') {
+            ctx.fillStyle = color;
+            ctx.fillRect(x, y, width, height);
+        }
+
+        function drawBall() {
+            ctx.drawImage(ballImage, ball.x, ball.y, ball.width, ball.height);
+        }
+
+        function drawScore() {
+            ctx.fillStyle = '#fff';
+            ctx.font = '20px Arial';
+            ctx.fillText(`Player: ${player.score}`, 20, 30);
+            ctx.fillText(`Computer: ${computer.score}`, canvas.width - 150, 30);
+        }
+
+        function movePaddle(paddle) {
+            paddle.y += paddle.dy;
+
+            if (paddle.y < 0) paddle.y = 0;
+            if (paddle.y + paddle.height > canvas.height) paddle.y = canvas.height - paddle.height;
+        }
+
+        function moveBall() {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            if (ball.y <= 0 || ball.y + ball.height >= canvas.height) {
+                ball.dy *= -1;
+            }
+
+            if (
+                ball.x <= player.x + player.width &&
+                ball.y + ball.height >= player.y &&
+                ball.y <= player.y + player.height
+            ) {
+                ball.dx *= -1;
+            }
+
+            if (
+                ball.x + ball.width >= computer.x &&
+                ball.y + ball.height >= computer.y &&
+                ball.y <= computer.y + computer.height
+            ) {
+                ball.dx *= -1;
+            }
+
+            if (ball.x < 0) {
+                computer.score++;
+                resetBall();
+            }
+
+            if (ball.x > canvas.width) {
+                player.score++;
+                resetBall();
+            }
+        }
+
+        function resetBall() {
+            ball.x = canvas.width / 2 - ball.width / 2;
+            ball.y = canvas.height / 2 - ball.height / 2;
+            ball.dx *= -1;
+        }
+
+        function computerAI() {
+            if (ball.y < computer.y + computer.height / 2) {
+                computer.dy = -computer.speed;
+            } else {
+                computer.dy = computer.speed;
+            }
+
+            movePaddle(computer);
+        }
+
+        function update() {
+            movePaddle(player);
+            moveBall();
+            computerAI();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawRect(player.x, player.y, player.width, player.height);
+            drawRect(computer.x, computer.y, computer.width, computer.height);
+            drawBall();
+            drawScore();
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') player.dy = -player.speed;
+            if (e.key === 'ArrowDown') player.dy = player.speed;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown') player.dy = 0;
+        });
+
+        ballImage.onload = gameLoop;
+    </script>
+</body>
+</html>
