@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Note Listen Trainer</title>
+        <style>
+            :root {
+                --bg: #f6f4ef;
+                --text: #1a1a1a;
+                --panel: #ffffff;
+                --primary: #0f6d56;
+                --primary-dark: #0b4d3d;
+                --muted: #5f6a66;
+                --success: #1d7f3f;
+                --error: #ad2f22;
+                --border: #d9d8d3;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                padding: 24px;
+                font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+                background: radial-gradient(circle at top, #fffdf8 0%, var(--bg) 60%);
+                color: var(--text);
+                display: grid;
+                place-items: center;
+            }
+
+            .trainer {
+                width: min(720px, 100%);
+                background: var(--panel);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 24px;
+                box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
+            }
+
+            h1 {
+                margin-top: 0;
+                margin-bottom: 8px;
+            }
+
+            p {
+                margin-top: 0;
+                color: var(--muted);
+                line-height: 1.5;
+            }
+
+            .controls,
+            .note-grid {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .countdown-config {
+                margin: 14px 0 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--muted);
+                font-weight: 600;
+            }
+
+            .sound-config {
+                margin: 0 0 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--muted);
+                font-weight: 600;
+            }
+
+            .note-options {
+                margin: 0 0 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--muted);
+                font-weight: 600;
+            }
+
+            .countdown-config input {
+                width: 88px;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 8px;
+                font-size: 1rem;
+                color: var(--text);
+            }
+
+            .sound-config select {
+                min-width: 180px;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 8px;
+                font-size: 1rem;
+                color: var(--text);
+                background: #ffffff;
+            }
+
+            .note-options input[type="checkbox"] {
+                width: 18px;
+                height: 18px;
+                accent-color: var(--primary);
+            }
+
+            button {
+                border: none;
+                border-radius: 10px;
+                padding: 12px 16px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            .control {
+                background: var(--primary);
+                color: #fff;
+            }
+
+            .control:hover {
+                background: var(--primary-dark);
+            }
+
+            .note-btn {
+                min-width: 56px;
+                background: #f1f4f3;
+                color: #1e2a26;
+                border: 1px solid var(--border);
+            }
+
+            .note-btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+            #feedback {
+                margin: 16px 0 0;
+                min-height: 1.5rem;
+                font-weight: 700;
+            }
+
+            #feedback.success {
+                color: var(--success);
+            }
+
+            #feedback.error {
+                color: var(--error);
+            }
+        </style>
+    </head>
+    <body>
+        <main class="trainer">
+            <h1>Note Listen Trainer</h1>
+            <p>Press <strong>New Random Note</strong>, listen, then guess which scale note you heard.</p>
+
+            <div class="controls">
+                <button id="new-note" class="control" type="button">New Random Note</button>
+                <button id="replay-note" class="control" type="button">Replay Note</button>
+            </div>
+
+            <div class="countdown-config">
+                <label for="countdown-seconds">Auto-next countdown (seconds):</label>
+                <input id="countdown-seconds" type="number" min="0" max="30" step="1" value="1" />
+            </div>
+
+            <div class="sound-config">
+                <label for="sound-mode">Sound:</label>
+                <select id="sound-mode">
+                    <option value="piano-warm">Piano Warm</option>
+                    <option value="piano-bright">Piano Bright</option>
+                    <option value="organ-soft">Organ Soft</option>
+                    <option value="pluck">Pluck</option>
+                    <option value="random">Random Each Round</option>
+                </select>
+            </div>
+
+            <div class="note-options">
+                <input id="no-repeat-note" type="checkbox" />
+                <label for="no-repeat-note">Prevent same note twice in a row</label>
+            </div>
+
+            <h2>Choose Your Guess</h2>
+            <div id="note-buttons" class="note-grid" aria-label="Note choices"></div>
+
+            <p id="feedback" role="status" aria-live="polite"></p>
+        </main>
+        <script src="app.js"></script>
+    </body>
+</html>
